@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="azure-test.AppHost/azure-test.AppHost.csproj" />
+  <Project Path="azure-test.ServiceDefaults/azure-test.ServiceDefaults.csproj" />
+</Solution>
