@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.5.3">
+<Project Sdk="Aspire.AppHost.Sdk/13.5.4">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -11,11 +11,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BffGateway\BffGateway.csproj" />
+    <ProjectReference Include="..\RemoteApi\RemoteApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.Azure.AppContainers" Version="13.5.3" />
-    <PackageReference Include="Aspire.Hosting.Azure.KeyVault" Version="13.5.3" />
+    <PackageReference Include="Aspire.Hosting.Azure.AppContainers" Version="13.5.4" />
+    <PackageReference Include="Aspire.Hosting.Azure.KeyVault" Version="13.5.4" />
   </ItemGroup>
 
 </Project>
