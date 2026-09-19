@@ -1,6 +1,9 @@
 using Azure.Security.KeyVault.Secrets;
 using Duende.Bff;
+using Duende.Bff.EntityFramework;
 using Duende.Bff.Yarp;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +17,11 @@ builder.Services.AddSwaggerGen();
 builder.AddAzureKeyVaultClient(connectionName: "key-vault");
 
 builder.Services.AddBff()
+    .AddServerSideSessions()
+    .AddEntityFrameworkServerSideSessions(options =>
+    {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("ServerSideSessionsdb"));
+    })
     .ConfigureOpenIdConnect(options =>
     {
         options.Authority = "https://demo.duendesoftware.com";
@@ -32,6 +40,10 @@ builder.Services.AddBff()
 
         // Add this scope if you want to receive refresh tokens
         options.Scope.Add("offline_access");
+
+        //options.CallbackPath = "/signin-oidc";
+
+        //options.ReturnUrlParameter = "";
     })
     .ConfigureCookies(options =>
     {
@@ -56,6 +68,12 @@ builder.Services.AddReverseProxy()
 
 builder.Services.AddAuthorization();
 
+// Add `.PersistKeysTo…()` and `.ProtectKeysWith…()` calls
+// See more at https://docs.duendesoftware.com/general/data-protection
+builder.Services.AddDataProtection()
+    .SetApplicationName("BFF");
+
+
 var app = builder.Build();
 
 // 2. Enable Swagger middleware ONLY in Development environments for safety
@@ -64,6 +82,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+
 
 app.MapReverseProxy();
 
@@ -80,13 +100,14 @@ app.UseBff();
 // adds authorization for local and remote API endpoints
 app.UseAuthorization();
 
+
 //---------------
 
-var secretName = "my-api-key";
+// var secretName = "my-api-key";
 
-app.MapGet("/", async (SecretClient secretClient) =>
-{
-    var secret = await secretClient.GetSecretAsync(secretName);
-    return secret.Value.Value;
-});
+// app.MapGet("/my-api-key", async (SecretClient secretClient) =>
+// {
+//     var secret = await secretClient.GetSecretAsync(secretName);
+//     return secret.Value.Value;
+// });
 app.Run();
