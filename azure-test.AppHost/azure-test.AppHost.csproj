@@ -12,6 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BffGateway\BffGateway.csproj" />
     <ProjectReference Include="..\RemoteApi\RemoteApi.csproj" />
+    <ProjectReference Include="..\BffGateway.MigrationService\BffGateway.MigrationService.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="azure-test.AppHost/azure-test.AppHost.csproj" />
   <Project Path="azure-test.ServiceDefaults/azure-test.ServiceDefaults.csproj" />
+  <Project Path="BffGateway.MigrationService/BffGateway.MigrationService.csproj" />
   <Project Path="BffGateway/BffGateway.csproj" />
   <Project Path="RemoteApi/RemoteApi.csproj" />
 </Solution>

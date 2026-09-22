@@ -1,0 +1,19 @@
+<p>home-page works!</p>
+@if (user.hasValue()) {
+  <div>
+    {{ user.value() | json }}
+  </div>
+  <div>
+    <ul>
+    @for (userClaim of user.value(); track userClaim.type) {
+      <li>type: {{ userClaim.type }} = value: {{ userClaim.value }} </li>
+    } @empty {
+      <li>There are no items.</li>
+    }
+    </ul>
+  </div>
+} @else if (user.error()) {
+  <div>Could not load user information</div>
+} @else if (user.isLoading()) {
+  <div>Loading user info...</div>
+}

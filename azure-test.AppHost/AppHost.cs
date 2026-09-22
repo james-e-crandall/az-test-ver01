@@ -9,12 +9,16 @@ var sqlServer = builder.AddSqlServer("sqlServer")
 
 var serverSideSessionsdb = sqlServer.AddDatabase("ServerSideSessionsdb");
 
+var bffMigrationService = builder.AddProject<Projects.BffGateway_MigrationService>("BffMigrationService")
+    .WaitFor(sqlServer)
+    .WithReference(serverSideSessionsdb);
+
 var keyVault = builder.AddAzureKeyVault("key-vault");
 
 var frontend = builder.AddJavaScriptApp("frontend", "../frontend", runScriptName: "start")
     .WithNpm(installCommand: "ci")
     .WithHttpEndpoint(env: "PORT")
-    .WithExternalHttpEndpoints()
+    //.WithExternalHttpEndpoints()
     .PublishAsDockerFile();
 
 var remoteApi = builder.AddProject<Projects.RemoteApi>("RemoteApi")
@@ -25,6 +29,7 @@ var bffGateway = builder.AddProject<Projects.BffGateway>("BffGateway")
     .WithReference(frontend)
     .WaitFor(serverSideSessionsdb)
     .WithReference(serverSideSessionsdb)
+    .WaitForCompletion(bffMigrationService)
     .WithExternalHttpEndpoints()
     .WithReference(remoteApi);
 
