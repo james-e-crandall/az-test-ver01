@@ -1,5 +1,5 @@
 import { httpResource, HttpResourceRef } from '@angular/common/http';
-import { Service, Signal } from '@angular/core';
+import { computed, Service, Signal } from '@angular/core';
 import { StringDecoder } from 'string_decoder';
 import { UserClaim } from './UserClain';
 
@@ -15,5 +15,4 @@ export class BffService {
       },
     }));
   }
-
 }

@@ -1,0 +1,29 @@
+@if (userResource.hasValue()) {
+  <div>
+    <ul>
+    @for (userClaim of userResource.value(); track userClaim.type) {
+      <li>type: {{ userClaim.type }} = value: {{ userClaim.value }} </li>
+    } @empty {
+      <li>There are no items.</li>
+    }
+    </ul>
+  </div>
+  <div>
+    Welcome, {{ name() }}!
+  </div>
+  <div>
+    <!-- Logout: the href must include the session ID from the logout_url claim -->
+    <!-- Read this from the /bff/user response, not hardcoded -->
+    <a id="logout-link" [href]="logout_url()">Log out</a>
+  </div>
+  <div>
+    <span>Session expires at: {{ session_expires_in() }}</span>
+  </div>
+} @else if (userResource.error()) {
+  <div>
+    <!-- Login: redirects to the identity provider -->
+    <a href="/bff/login">Log in</a>
+  </div>
+} @else if (userResource.isLoading()) {
+  <div>Loading user info...</div>
+}
