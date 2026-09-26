@@ -1,5 +1,6 @@
 using Azure.Security.KeyVault.Secrets;
 using Duende.Bff;
+using Duende.Bff.DynamicFrontends;
 using Duende.Bff.EntityFramework;
 using Duende.Bff.Yarp;
 using Microsoft.AspNetCore.DataProtection;
@@ -16,7 +17,15 @@ builder.Services.AddSwaggerGen();
 
 builder.AddAzureKeyVaultClient(connectionName: "key-vault");
 
+
+// ...existing code for authentication, authorization, etc.
 builder.Services.AddBff()
+    .AddFrontends(
+        new BffFrontend(BffFrontendName.Parse("default-frontend"))
+            .WithCdnIndexHtmlUrl(new Uri("https+http://frontend")),
+        new BffFrontend(BffFrontendName.Parse("admin-frontend"))
+            .WithCdnIndexHtmlUrl(new Uri("https+http://backoffice"))
+    )
     .AddServerSideSessions()
     .AddEntityFrameworkServerSideSessions(options =>
     {
@@ -83,8 +92,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
-
 app.MapReverseProxy();
 
 app.UseAuthentication();
@@ -99,7 +106,6 @@ app.UseBff();
   
 // adds authorization for local and remote API endpoints
 app.UseAuthorization();
-
 
 //---------------
 

@@ -18,7 +18,11 @@ var keyVault = builder.AddAzureKeyVault("key-vault");
 var frontend = builder.AddJavaScriptApp("frontend", "../frontend", runScriptName: "start")
     .WithNpm(installCommand: "ci")
     .WithHttpEndpoint(env: "PORT")
-    //.WithExternalHttpEndpoints()
+    .PublishAsDockerFile();
+
+var backoffice = builder.AddJavaScriptApp("backoffice", "../backoffice", runScriptName: "start")
+    .WithNpm(installCommand: "ci")
+    .WithHttpEndpoint(env: "PORT")
     .PublishAsDockerFile();
 
 var remoteApi = builder.AddProject<Projects.RemoteApi>("RemoteApi")
@@ -26,10 +30,10 @@ var remoteApi = builder.AddProject<Projects.RemoteApi>("RemoteApi")
 
 var bffGateway = builder.AddProject<Projects.BffGateway>("BffGateway")
     .WithReference(keyVault)
-    .WithReference(frontend)
-    .WaitFor(serverSideSessionsdb)
     .WithReference(serverSideSessionsdb)
     .WaitForCompletion(bffMigrationService)
+    .WithReference(frontend)
+    .WithReference(backoffice)
     .WithExternalHttpEndpoints()
     .WithReference(remoteApi);
 
@@ -38,5 +42,8 @@ keyVault.AddSecret("my-api-key", apiKey);
 
 frontend.WithReference(bffGateway)
     .WaitFor(bffGateway);
+
+frontend.WithReference(backoffice)
+    .WaitFor(backoffice);
 
 builder.Build().Run();
